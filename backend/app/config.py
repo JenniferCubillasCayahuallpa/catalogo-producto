@@ -13,8 +13,10 @@ DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "1521")
 DB_SERVICE = os.getenv("DB_SERVICE", "XEPDB1")
 
-# URI para SQLAlchemy con Oracle
-ORACLE_URI = f'oracle+oracledb://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/?service_name={DB_SERVICE}'
+# URI para SQLAlchemy con Oracle 
+# ORACLE_URI = f'oracle+oracledb://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/?service_name={DB_SERVICE}' (usa directamente el DNS)
+
+ORACLE_URI = f'oracle+oracledb://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_SERVICE}'
 
 # Desactivar seguimiento de modificaciones
 SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -5,14 +5,19 @@ function App() {
   const [productos, setProductos] = useState([])
   const [form, setForm] = useState({ nombre: '', precio: '', descripcion: '' })
   const [busqueda, setBusqueda] = useState('')
+  const [editId, setEditId] = useState(null) 
 
+  // usar busqueda en el GET
   const cargarProductos = async () => {
     const res = await api.get(`/productos?nombre=${busqueda}`)
     setProductos(res.data)
   }
 
   const agregarProducto = async () => {
-    await api.post('/productos', form)
+    await api.post('/productos', {
+      ...form,
+      precio: Number (form.precio) // convertir precio a número
+    })
     setForm({ nombre: '', precio: '', descripcion: '' })
     cargarProductos()
   }
@@ -22,14 +27,32 @@ function App() {
     cargarProductos()
   }
 
-  const modificarProducto = async (id) => {
-    await api.put(`/productos/${id}`, form)
+
+  const modificarProducto = async () => {
+    if (!editId) return
+    await api.put(`/productos/${editId}`, {
+      nombre: form.nombre,
+      precio: Number(form.precio),
+      descripcion: form.descripcion
+    })
+    setForm({ nombre: '', precio: '', descripcion: '' })
+    setEditId(null)
     cargarProductos()
   }
 
   useEffect(() => {
     cargarProductos()
   }, [busqueda])
+
+  //Cargar datos al formulario antes de modificar
+  const editarProducto = (producto) => {
+    setForm({
+      nombre: producto.nombre,
+      precio: producto.precio,
+      descripcion: producto.descripcion
+    })
+    setEditId(producto.id)
+  }
 
   return (
     <div className="p-6 max-w-xl mx-auto">
@@ -47,7 +70,12 @@ function App() {
         <input type="text" placeholder="Nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="p-2 border w-full mb-2" />
         <input type="number" placeholder="Precio" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} className="p-2 border w-full mb-2" />
         <input type="text" placeholder="Descripción" value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} className="p-2 border w-full mb-2" />
-        <button onClick={agregarProducto} className="bg-blue-500 text-white px-4 py-2 rounded">Agregar</button>
+
+        {editId ? (
+          <button onClick={modificarProducto} className="bg-green-500 text-white px-4 py-2 rounded">Guardar Cambios</button>
+        ) : (
+          <button onClick={agregarProducto} className="bg-blue-500 text-white px-4 py-2 rounded">Agregar</button>
+        )}
       </div>
 
       <ul>
@@ -58,7 +86,7 @@ function App() {
               <p className="text-sm text-gray-600">{p.descripcion}</p>
             </div>
             <div className="space-x-2">
-              <button onClick={() => modificarProducto(p.id)} className="bg-yellow-500 text-white px-2 py-1 rounded">Modificar</button>
+              <button onClick={() => editarProducto(p)} className="bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
               <button onClick={() => eliminarProducto(p.id)} className="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
             </div>
           </li>
