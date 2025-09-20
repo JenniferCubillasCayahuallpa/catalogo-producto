@@ -1,5 +1,5 @@
 # app/config.py
-# Configuración de conexión a Oracle con SQLAlchemy
+#Este archivo debe contener las variables de entorno y la URI para SQLAlchemy:
 import os
 from dotenv import load_dotenv
 
@@ -13,9 +13,8 @@ DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "1521")
 DB_SERVICE = os.getenv("DB_SERVICE", "XEPDB1")
 
-# URI que Flask-SQLAlchemy espera
-SQLALCHEMY_DATABASE_URI = (
-    f"oracle+oracledb://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/?service_name={DB_SERVICE}"
-)
-# Config extra
+# URI para SQLAlchemy con Oracle
+ORACLE_URI = f'oracle+oracledb://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/?service_name={DB_SERVICE}'
+
+# Desactivar seguimiento de modificaciones
 SQLALCHEMY_TRACK_MODIFICATIONS = False
